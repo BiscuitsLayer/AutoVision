@@ -16,6 +16,7 @@ class NotificationWorker(threading.Thread):
         while self.running:
             if not self.queue.empty():
                 plate_number, img_path, location = self.queue.get()
+                print(f"detected : {plate_number,img_path,location}")
                 chat_ids = get_user_chat_ids_for_plate(plate_number)
                 for chat_id in chat_ids:
                     loop.run_until_complete(

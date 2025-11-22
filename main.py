@@ -8,9 +8,9 @@ from workers.NotificationWorker import NotificationWorker
 import dotenv
 from handlers.handler import start_handler, stop_handler, list_handler, add_handler, remove_handler, search_handler, register_handler
 import warnings
-import logging
-logging.getLogger("ultralytics").setLevel(logging.CRITICAL)
-warnings.filterwarnings("ignore")
+# import logging
+# logging.getLogger("ultralytics").setLevel(logging.CRITICAL)
+# warnings.filterwarnings("ignore")
 print(f"Current working directory: {os.getcwd()}")
 dotenv.load_dotenv()
 
@@ -28,7 +28,7 @@ def main():
     print("Checking Database...")
     init_db()
     token = os.getenv("TOKEN")
-    app = ApplicationBuilder().token(token).build()
+    app = ApplicationBuilder().token(token).build() # type: ignore
     bot = app.bot
     print("Initializing Handlers...")
 
@@ -44,7 +44,7 @@ def main():
     notifier = NotificationWorker(notify_queue, bot)
     notifier.start()
 
-    cameras = [Camera(0,"Gate 1")]
+    cameras = [Camera("/Volumes/SSD/rohan/Projects/autovision/13740977_1920_1080_60fps.mp4","Gate 1"),Camera("/Volumes/SSD/rohan/Projects/autovision/5009678-hd_1920_1080_25fps.mp4","Gate 2")] # type: ignore
     workers = []
 
     for cam in cameras:

@@ -4,7 +4,7 @@ import numpy as np
 from queue import Queue
 
 from sympy import false
-from ultralytics import YOLO
+from ultralytics import YOLO # type: ignore
 from sort.sort import Sort
 from utils.util import save_detected_car
 from utils.db_helper import add_detection
@@ -16,7 +16,7 @@ class CameraWorker(threading.Thread):
         self.plate_model = YOLO(plate_model_path,verbose=false)
         self.ocr_func = ocr_func
         self.notify_queue = notify_queue
-        self.vehicle_model = YOLO("weights/yolov8n.pt",verbose=false)  # pre-trained YOLOv8n
+        self.vehicle_model = YOLO("weights/yolov8n.pt",verbose=false) 
         self.tracker = Sort()
         self.running = True
 
@@ -26,7 +26,6 @@ class CameraWorker(threading.Thread):
             ret, frame = cap.read()
             if not ret:
                 continue
-
             # Detect vehicles
             results = self.vehicle_model(frame)
             dets = []
@@ -51,14 +50,12 @@ class CameraWorker(threading.Thread):
                 for plate_det in plate_results[0].boxes:
                     px1,py1,px2,py2 = map(int, plate_det.xyxy[0])
                     plate_crop = vehicle_crop[py1:py2, px1:px2]
-                    plate_number = self.ocr_func(plate_crop)
-
+                    plate_number,raw = self.ocr_func(plate_crop)
                     img_path = save_detected_car(vehicle_crop, plate_number, self.camera.getLocation())
                     add_detection(plate_number, self.camera.getLocation(), img_path)
 
                     # Send to notification queue
                     self.notify_queue.put((plate_number, img_path, self.camera.getLocation()))
-
         cap.release()
 
     def stop(self):

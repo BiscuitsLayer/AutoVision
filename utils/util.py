@@ -14,7 +14,7 @@ processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-printed")
 model = VisionEncoderDecoderModel.from_pretrained("microsoft/trocr-base-printed")
 
 device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
-model.to(device)
+model.to(device) # type: ignore
 
 
 # ----------------------------
@@ -54,7 +54,7 @@ def ocr_plate(img):
     Returns: (final_plate, raw_text)
     """
     pil_img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-    pixel_values = processor(images=pil_img, return_tensors="pt").pixel_values.to(device)
+    pixel_values = processor(images=pil_img, return_tensors="pt").pixel_values.to(device) # type: ignore
     generated_ids = model.generate(pixel_values, max_new_tokens=20)
     raw_text = processor.batch_decode(generated_ids, skip_special_tokens=True)[0]
 
@@ -63,7 +63,7 @@ def ocr_plate(img):
 
     # Apply confusion correction
     corrected = correct_plate_confusion(cleaned)
-
+    print(f"detected text: {corrected}  {raw_text}")
     return corrected, raw_text
 # Save vehicle crop to file
 def save_detected_car(frame, plate_number, location):
