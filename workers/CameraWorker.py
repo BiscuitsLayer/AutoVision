@@ -2,7 +2,7 @@ import threading
 import cv2
 import numpy as np
 from queue import Queue
-
+import time
 from sympy import false
 from ultralytics import YOLO # type: ignore
 from sort.sort import Sort
@@ -19,6 +19,7 @@ class CameraWorker(threading.Thread):
         self.vehicle_model = YOLO("weights/yolov8n.pt",verbose=false) 
         self.tracker = Sort()
         self.running = True
+        self.last_detected={}
 
     def run(self):
         cap = cv2.VideoCapture(self.camera.getCamera())
@@ -54,7 +55,11 @@ class CameraWorker(threading.Thread):
                         plate_number,raw = self.ocr_func(plate_crop)
                         img_path = save_detected_car(vehicle_crop, plate_number, self.camera.getLocation())
                         add_detection(plate_number, self.camera.getLocation(), img_path)
-
+                        cooldown = 10  # seconds
+                        now = time.time()
+                        if plate_number in self.last_detected and now - self.last_detected[plate_number] < cooldown:
+                            continue
+                        self.last_detected[plate_number] = now
                         # Send to notification queue
                         self.notify_queue.put((plate_number, img_path, self.camera.getLocation()))
             except Exception as e:
