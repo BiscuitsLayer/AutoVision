@@ -76,9 +76,9 @@ dependencies:
   - pycparser=2.23
   - pyparsing=3.2.5
   - pysocks=1.7.1
-  - python=3.12.12
+  - python=3.10.8
   - python-dateutil=2.9.0.post0
-  - pytorch=2.5.1
+  - pytorch
   - pyyaml=6.0.3
   - readline=8.3
   - requests=2.32.5
@@ -121,7 +121,6 @@ dependencies:
       - safetensors==0.7.0
       - scikit-image==0.25.2
       - sniffio==1.3.1
-      - sympy==1.13.1
       - tifffile==2025.10.16
       - tokenizers==0.22.1
       - tqdm==4.67.1

@@ -44,7 +44,7 @@ def main():
     notifier = NotificationWorker(notify_queue, bot)
     notifier.start()
 
-    cameras = [Camera("/Volumes/SSD/rohan/Projects/autovision/13740977_1920_1080_60fps.mp4","Gate 1"),Camera("/Volumes/SSD/rohan/Projects/autovision/5009678-hd_1920_1080_25fps.mp4","Gate 2")] # type: ignore
+    cameras = [Camera(os.path.join(os.getcwd(),"13740977_1920_1080_60fps.mp4"),"Gate 1"),Camera(os.path.join(os.getcwd(),"5009678-hd_1920_1080_25fps.mp4"),"Gate 2")] # type: ignore
     workers = []
 
     for cam in cameras:
