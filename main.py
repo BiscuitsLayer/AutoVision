@@ -7,7 +7,7 @@ from workers.CameraWorker import CameraWorker
 from workers.NotificationWorker import NotificationWorker
 import dotenv
 from handlers.handler import start_handler, stop_handler, list_handler, add_handler, remove_handler, search_handler, register_handler
-import warnings
+# import warnings
 # import logging
 # logging.getLogger("ultralytics").setLevel(logging.CRITICAL)
 # warnings.filterwarnings("ignore")

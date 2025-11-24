@@ -65,6 +65,7 @@ def add_detection(plate_number, location="unknown", image_path=None):
         "INSERT INTO detections (plate_number, location, image_path, processed) VALUES (?, ?, ?, 0)",
         (plate_number, location, image_path)
     )
+    print(f"[DB] Added detection for plate: {plate_number} at {location}")
     conn.commit()
     conn.close()
 
