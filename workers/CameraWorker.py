@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 from queue import Queue
 import time
-from sympy import false
 from ultralytics import YOLO # type: ignore
 from sort.sort import Sort
 from utils.util import save_detected_car
@@ -13,7 +12,7 @@ class CameraWorker(threading.Thread):
     def __init__(self, camera, plate_model_path, ocr_func, notify_queue):
         super().__init__()
         self.camera = camera
-        self.plate_model = YOLO(plate_model_path,verbose=false)
+        self.plate_model = YOLO(plate_model_path,verbose=False)
         self.ocr_func = ocr_func
         self.notify_queue = notify_queue
         self.vehicle_model = YOLO("weights/yolov8n.pt",verbose=False) 
@@ -55,14 +54,15 @@ class CameraWorker(threading.Thread):
                         plate_number_raw,raw = self.ocr_func(plate_crop)
                         plate_number=get_closest_plate(plate_number_raw)
                         if plate_number is None:
+                            print("No close match found for plate:",plate_number_raw)
                             continue
                         print("PLate no detected by camera worker:",plate_number)
+                        if plate_number in self.last_detected and now - self.last_detected[plate_number] < cooldown:
+                            continue
                         img_path = save_detected_car(vehicle_crop, plate_number, self.camera.getLocation())
                         add_detection(plate_number, self.camera.getLocation(), img_path)
                         cooldown = 10  # seconds
                         now = time.time()
-                        if plate_number in self.last_detected and now - self.last_detected[plate_number] < cooldown:
-                            continue
                         self.last_detected[plate_number] = now
                         # Send to notification queue
                         self.notify_queue.put((plate_number, img_path, self.camera.getLocation()))
